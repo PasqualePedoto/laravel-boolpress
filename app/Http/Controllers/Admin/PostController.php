@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Mail\PostPublicationMail;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 use Illuminate\Support\Str;
@@ -100,6 +102,12 @@ class PostController extends Controller
         $new_post->user_id = Auth::id();
 
         $new_post->save();
+
+        if($new_post->is_published){
+            $mail = new PostPublicationMail($new_post);
+            $receiver = Auth::user()->email;
+            Mail::to($receiver)->send($mail);
+        }
 
         if(array_key_exists('tags',$data)) $new_post->tags()->attach($data['tags']);
 

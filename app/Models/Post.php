@@ -10,7 +10,6 @@ class Post extends Model
     protected $fillable = [
         'title',
         'content',
-        'image',
     ];
 
     // RELATIONS
