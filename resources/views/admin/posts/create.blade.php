@@ -29,9 +29,9 @@
                     <textarea class="form-control" id="content" rows="3" name="content">{{ old('content',$post->content) }}</textarea>
                 </div>
 
+                {{-- Post is mine? --}}
                 @if(!Route::is('admin.posts.create'))
                     @if($post->user_id != Auth::id())
-                        {{-- Post is mine? --}}
                         <div class="d-flex align-items-end justify-content-end col-6">
                             <div class="form-group form-check">
                                 <label for="my_post" class="mr-4">Vuoi che il post sia tuo? Spunta qui</label>
@@ -70,6 +70,16 @@
                         value="1"
                         @if($post->is_published) checked @endif
                         >
+                </div>
+
+                {{-- Categories --}}
+                <div class="form-group col-6">
+                    <select name="category_id" class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+                        <option value="">Tutte le categorie</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" @if($category->id == $post->category_id) selected @endif>{{ $category->label }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 {{-- Button --}}
