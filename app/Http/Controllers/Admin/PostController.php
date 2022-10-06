@@ -11,6 +11,7 @@ use App\Models\Tag;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 use Illuminate\Support\Str;
@@ -68,14 +69,14 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|unique:posts',
             'content' => 'nullable|string',
-            'image' => 'nullable|url',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg',
             'tags' => 'nullable|exists:tags,id',
             'is_published' => 'boolean'
         ],[
             'title.required' => 'Il titolo è un campo obbligatorio',
             'title.string' => 'Il titolo deve essere composta da caratteri',
             'title.content' => 'Il content deve essere composta da caratteri',
-            'image.url' => 'L\'immagine deve essere un url valida',
+            'image.mimes' => 'L\'immagine deve avere estensione: jpg, png o jpeg',
         ]);
 
         $data = $request->all();
@@ -90,6 +91,11 @@ class PostController extends Controller
         else $new_post->is_published = false;
 
         if(array_key_exists('category_id',$data)) $new_post->category_id = $data['category_id'];
+
+        if(array_key_exists('image',$data)){
+            $image_link = Storage::put('posts_image',$data['image']);
+            $new_post->image = $image_link;
+        } 
 
         $new_post->user_id = Auth::id();
 
@@ -155,6 +161,12 @@ class PostController extends Controller
 
         if(array_key_exists('category_id',$data)) $post->category_id = $data['category_id'];
 
+        if(array_key_exists('image',$data)){
+            if($post->image) Storage::delete($post->image);
+            $image_link = Storage::put('posts_image',$data['image']);
+            $post->image = $image_link;
+        }
+
         if(array_key_exists('tags',$data)){
             $post->tags()->sync($data['tags']);
         }else{
@@ -174,6 +186,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        if($post->image) Storage::delete($post->image);
+
         $post->delete();
         
         return redirect()->route('admin.posts.index');

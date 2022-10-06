@@ -5,7 +5,7 @@
         <div class="card" >
             <div class="row no-gutters">
               <div class="col-12 d-flex">
-                <img src="{{ $post->image }}" alt="post-image" class="img-fluid w-50">
+                <img src="{{ asset('storage/'.$post->image) }}" alt="post-image" class="img-fluid w-50">
                 <div class="col-md-8">
                   <div class="card-body">
                     <h5 class="card-title">{{ $post->title }}</h5>

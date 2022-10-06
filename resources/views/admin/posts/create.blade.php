@@ -4,11 +4,11 @@
     <div class="container">
         @if($post->exists)
             <h1 class="text-center mb-5">Edit post: {{ $post->title }}</h1>
-            <form action="{{ route('admin.posts.update',$post) }}" method="POST" class="d-flex flex-wrap">
+            <form action="{{ route('admin.posts.update',$post) }}" method="POST" class="d-flex flex-wrap" enctype="multipart/form-data">
                 @method('PUT')
         @else
             <h1 class="text-center mb-5">Create new post</h1>
-            <form action="{{ route('admin.posts.store') }}" method="POST" class="d-flex flex-wrap">
+            <form action="{{ route('admin.posts.store') }}" method="POST" class="d-flex flex-wrap" enctype="multipart/form-data">
         @endif
             @csrf
                 {{-- Title --}}
@@ -18,9 +18,9 @@
                 </div>
                 
                 {{-- Image --}}
-                <div class="form-group col-6">
-                    <label for="image">Image</label>
-                    <input name="image" type="text" class="form-control" id="image" value="{{ old('image',$post->image) }}">
+                <div class="form-group col-6 d-flex align-items-end justify-content-end">
+                    <label for="image"></label>
+                    <input name="image" type="file" id="image" value="{{ old('image',$post->image) }}">
                 </div>
 
                 {{-- Content --}}
